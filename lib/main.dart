@@ -67,7 +67,8 @@ class SimpleLevel extends StatelessWidget {
               );
             },
         ),
-      player: Visitor(Vector2(mapWidth / 2 * TILE_SIZE, (mapHeight - 3.5) * TILE_SIZE))
+        player: Visitor(Vector2(mapWidth / 2 * TILE_SIZE, (mapHeight - 3.5) * TILE_SIZE)),
+        joystick: Joystick(directional: JoystickDirectional())
     );
   }
 }
