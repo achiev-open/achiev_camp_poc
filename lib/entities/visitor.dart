@@ -80,11 +80,19 @@ class VisitorSpriteSheet {
       );
 }
 
-class Visitor extends SimplePlayer {
+class Visitor extends SimplePlayer with ObjectCollision {
   Visitor(Vector2 position): super(
     position: position,
     size: Vector2(16, 32),
     animation: VisitorSpriteSheet.simpleDirectionAnimation,
     speed: 75
-  );
+  ) {
+    setupCollision(
+      CollisionConfig(
+          collisions: [
+            CollisionArea.rectangle(size: Vector2(16, 8), align: Vector2(0, 24))
+          ]
+      ),
+    );
+  }
 }

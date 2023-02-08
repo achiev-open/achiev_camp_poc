@@ -45,11 +45,18 @@ class SimpleLevel extends StatelessWidget {
       [0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ];
     int mapHeight = map.length;
     int mapWidth = map[0].length;
 
     return BonfireWidget(
+      // showCollisionArea: true,
         cameraConfig: CameraConfig(
           moveOnlyMapArea: true,
           sizeMovementWindow: Vector2(50,50),
@@ -61,7 +68,15 @@ class SimpleLevel extends StatelessWidget {
             matrix: map,
             builder: (ItemMatrixProperties prop) {
               TileModelSprite? sprite;
-              if (prop.value == 0) { sprite = waterSprite; }
+              List<CollisionArea> collisions = [];
+
+              if (prop.value == 0) {
+                sprite = waterSprite;
+                collisions.add(CollisionArea.rectangle(
+                  size: Vector2(TILE_SIZE, TILE_SIZE),
+                  align: Vector2(0, 0),
+                ));
+              }
               else if (prop.value == 1) { sprite = grassSprite; }
               else { throw new Exception("Value ${prop.value} doesn't match any sprite"); }
 
@@ -71,10 +86,11 @@ class SimpleLevel extends StatelessWidget {
                   sprite: sprite,
                   width: TILE_SIZE,
                   height: TILE_SIZE,
+                  collisions: collisions,
               );
             },
         ),
-        player: Visitor(Vector2(mapWidth / 2 * TILE_SIZE, (mapHeight - 3.5) * TILE_SIZE)),
+        player: Visitor(Vector2(mapWidth / 2 * TILE_SIZE, (mapHeight - 10.5) * TILE_SIZE)),
         joystick: Joystick(directional: JoystickDirectional())
     );
   }
