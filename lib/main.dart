@@ -1,6 +1,7 @@
 import 'package:achiev_camp_poc/entities/visitor.dart';
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() {
   runApp(const MyApp());
@@ -49,6 +50,12 @@ class SimpleLevel extends StatelessWidget {
     int mapWidth = map[0].length;
 
     return BonfireWidget(
+        cameraConfig: CameraConfig(
+          moveOnlyMapArea: true,
+          sizeMovementWindow: Vector2(50,50),
+          zoom: 2,
+          angle: 45 * pi / 180, // 45 deg
+        ),
         map: MatrixMapGenerator.generate(
             axisInverted: true,
             matrix: map,
