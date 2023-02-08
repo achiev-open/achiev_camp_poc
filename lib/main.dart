@@ -1,7 +1,6 @@
+import 'package:achiev_camp_poc/entities/visitor.dart';
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
-
-const TILE_SIZE = 32.0;
 
 void main() {
   runApp(const MyApp());
@@ -24,6 +23,7 @@ class SimpleLevel extends StatelessWidget {
   Widget build(BuildContext context) {
     TileModelSprite waterSprite = TileModelSprite(path: "tiles/water.png");
     TileModelSprite grassSprite = TileModelSprite(path: "tiles/grass.png");
+    double TILE_SIZE = 32.0;
 
     List<List<double>> map = [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -45,6 +45,8 @@ class SimpleLevel extends StatelessWidget {
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ];
+    int mapHeight = map.length;
+    int mapWidth = map[0].length;
 
     return BonfireWidget(
         map: MatrixMapGenerator.generate(
@@ -64,7 +66,8 @@ class SimpleLevel extends StatelessWidget {
                   height: TILE_SIZE,
               );
             },
-        )
+        ),
+      player: Visitor(Vector2(mapWidth / 2 * TILE_SIZE, (mapHeight - 3.5) * TILE_SIZE))
     );
   }
 }
