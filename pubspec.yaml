@@ -61,8 +61,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/tiles/grass.png
-    - assets/images/tiles/water.png
+    - assets/images/tiles/small-map.json
+    - assets/images/tiles/small-tileset.json
+    - assets/images/tiles/small-tileset.png
     - assets/images/players/Alex_idle_anim_16x16.png
     - assets/images/players/Alex_run_16x16.png
     - assets/images/decorations/house.png
