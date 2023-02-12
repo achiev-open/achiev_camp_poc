@@ -35,7 +35,7 @@ class SimpleLevel extends StatelessWidget {
           angle: 45 * pi / 180, // 45 deg
         ),
         map: WorldMapByTiled("tiles/small-map.json", forceTileSize: Vector2(32, 32)),
-        player: Visitor(Vector2(mapWidth / 2 * TILE_SIZE, (mapHeight - 5) * TILE_SIZE)),
+        player: Visitor(Vector2(mapWidth / 2 * TILE_SIZE, (mapHeight - 12) * TILE_SIZE)),
         joystick: Joystick(directional: JoystickDirectional())
     );
   }
