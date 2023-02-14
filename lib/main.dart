@@ -1,3 +1,4 @@
+import 'package:achiev_camp_poc/decorations/house.dart';
 import 'package:achiev_camp_poc/entities/visitor.dart';
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,8 @@ class SimpleLevel extends StatelessWidget {
         ),
         map: WorldMapByTiled("tiles/small-map.json", forceTileSize: Vector2(32, 32)),
         player: Visitor(Vector2(mapWidth / 2 * TILE_SIZE, (mapHeight - 12) * TILE_SIZE)),
-        joystick: Joystick(directional: JoystickDirectional())
+        joystick: Joystick(directional: JoystickDirectional()),
+        decorations: [House(Vector2(mapWidth / 2 * TILE_SIZE, 20 * TILE_SIZE))],
     );
   }
 }
