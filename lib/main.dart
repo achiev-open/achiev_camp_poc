@@ -35,10 +35,15 @@ class SimpleLevel extends StatelessWidget {
           zoom: 2,
           angle: 45 * pi / 180, // 45 deg
         ),
-        map: WorldMapByTiled("tiles/small-map.json", forceTileSize: Vector2(32, 32)),
+        map: WorldMapByTiled(
+          "tiles/small-map.json",
+          forceTileSize: Vector2(32, 32),
+          objectsBuilder: {
+            'house': (TiledObjectProperties properties) => House(properties.position),
+          }
+        ),
         player: Visitor(Vector2(mapWidth / 2 * TILE_SIZE, (mapHeight - 12) * TILE_SIZE)),
         joystick: Joystick(directional: JoystickDirectional()),
-        decorations: [House(Vector2(mapWidth / 2 * TILE_SIZE, 20 * TILE_SIZE))],
     );
   }
 }
