@@ -1,4 +1,7 @@
+import 'dart:html';
+
 import 'package:bonfire/bonfire.dart';
+import 'package:flutter/services.dart';
 
 class VisitorSpriteSheet {
   static double speed = 0.2;
@@ -94,5 +97,24 @@ class Visitor extends SimplePlayer with ObjectCollision {
           ]
       ),
     );
+  }
+
+  void toggleRun(bool isRunning) {
+    if (isRunning) {
+      speed = 150;
+    } else {
+      speed = 75;
+    }
+  }
+
+  @override
+  void joystickAction(JoystickActionEvent event) {
+    int key = event.id;
+
+    if (key == LogicalKeyboardKey.shiftLeft.keyId) {
+      toggleRun(event.event.name == "DOWN");
+    }
+
+    super.joystickAction(event);
   }
 }
