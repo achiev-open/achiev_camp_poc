@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/services.dart';
 
