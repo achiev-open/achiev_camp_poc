@@ -139,6 +139,18 @@
                  "width":128,
                  "x":416,
                  "y":608
+                }, 
+                {
+                 "class":"Guide",
+                 "height":0,
+                 "id":3,
+                 "name":"npc",
+                 "point":true,
+                 "rotation":0,
+                 "visible":true,
+                 "width":0,
+                 "x":511.186181400982,
+                 "y":991.777678628338
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -147,7 +159,7 @@
          "y":0
         }],
  "nextlayerid":4,
- "nextobjectid":3,
+ "nextobjectid":4,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.9.2",

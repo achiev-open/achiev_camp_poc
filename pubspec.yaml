@@ -66,6 +66,8 @@ flutter:
     - assets/images/tiles/small-tileset.png
     - assets/images/players/Alex_idle_anim_16x16.png
     - assets/images/players/Alex_run_16x16.png
+    - assets/images/players/Amelia_idle_anim_16x16.png
+    - assets/images/players/Amelia_run_16x16.png
     - assets/images/decorations/house.png
 
   # An image asset can refer to one or more resolution-specific "variants", see

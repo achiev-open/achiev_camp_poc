@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:achiev_camp_poc/decorations/house.dart';
+import 'package:achiev_camp_poc/entities/guide.dart';
 import 'package:achiev_camp_poc/entities/visitor.dart';
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/foundation.dart';
@@ -44,6 +45,12 @@ class SimpleLevel extends StatelessWidget {
           forceTileSize: Vector2(32, 32),
           objectsBuilder: {
             'house': (TiledObjectProperties properties) => House(properties.position),
+            'npc': (TiledObjectProperties properties) {
+              if (properties.type == "Guide") {
+                return Guide(properties.position);
+              }
+              throw UnimplementedError();
+            }
           }
         ),
         player: Visitor(Vector2(mapWidth / 2 * TILE_SIZE, (mapHeight - 12) * TILE_SIZE)),
