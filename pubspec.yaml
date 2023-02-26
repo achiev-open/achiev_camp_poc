@@ -69,6 +69,7 @@ flutter:
     - assets/images/players/Amelia_idle_anim_16x16.png
     - assets/images/players/Amelia_run_16x16.png
     - assets/images/decorations/house.png
+    - assets/images/ui/talk_16x16.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

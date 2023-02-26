@@ -1,5 +1,9 @@
+import 'dart:developer';
+
+import 'package:achiev_camp_poc/entities/visitor.dart';
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class GuideSpriteSheet {
   static double speed = 0.2;
@@ -81,9 +85,10 @@ class GuideSpriteSheet {
       );
 }
 
-class Guide extends SimpleNpc with ObjectCollision, AutomaticRandomMovement {
+class Guide extends SimpleNpc with ObjectCollision, AutomaticRandomMovement, TapGesture {
   bool hasGreetedPlayer = false;
   bool isTalking = false;
+  bool isCloseToPlayer = false;
 
   Guide(Vector2 position): super(
     position: position,
@@ -132,8 +137,114 @@ class Guide extends SimpleNpc with ObjectCollision, AutomaticRandomMovement {
           }
       );
     } else {
-      runRandomMovement(dt);
+      if (!isCloseToPlayer) { // Stop moving when we're close to the player
+        runRandomMovement(dt);
+      }
+
+      seePlayer(
+        observed: (player) {
+          isCloseToPlayer = true;
+          _toggleEmote();
+        },
+        notObserved: () {
+          isCloseToPlayer = false;
+          _toggleEmote();
+        }
+      );
     }
     super.update(dt);
+  }
+
+  AnimatedFollowerObject? emote;
+  void _toggleEmote() {
+    if (isCloseToPlayer) {
+      if (emote != null) return; // Already displayed
+      emote = AnimatedFollowerObject(
+          animation: SpriteAnimation.load(
+            "ui/talk_16x16.png",
+            SpriteAnimationData.sequenced(amount: 8, stepTime: 0.1, textureSize: Vector2(16, 16)),
+          ),
+          target: this,
+          size: Vector2(16, 16),
+          positionFromTarget: Vector2(0, 0),
+          loopAnimation: true
+      );
+
+      gameRef.add(emote!);
+    } else {
+      if (emote == null) return; // No emote to remove
+      emote!.removeFromParent();
+      emote = null;
+    }
+  }
+
+  @override
+  void onTap() {
+    if (!isCloseToPlayer) return;
+    _showChoicesDialog();
+  }
+
+  void _showChoicesDialog() {
+    Map<String, String> possibleQuestions = {
+      "What's your name ?": "My name is Amelia, I'm here to help you",
+      "Where are we ?": "We're on The Island, it's pretty empty yet but it will become an amazing place one day",
+    };
+
+    showDialog(
+        context: context,
+        barrierColor: Colors.transparent,
+        builder: (BuildContext dialogContext) {
+          List<Widget> questionsWidgets = [];
+          possibleQuestions.forEach((key, value) {
+            questionsWidgets.add(const SizedBox(height: 10));
+            questionsWidgets.add(ElevatedButton(
+              child: Text(key),
+              onPressed: () {
+                _answerQuestion(dialogContext, value);
+              },
+            ));
+          });
+
+          return TalkDialog(
+              says: [
+                Say(
+                    text: [TextSpan(text: "How can I help you ?")],
+                    person: Container(
+                      padding: EdgeInsets.only(bottom: 110 + ((possibleQuestions.length - 1) * 38)), // textBoxMinHeight = 100. button = 28. Spacing = 10
+                      child: GuideSpriteSheet.idleDown.asWidget(),
+                    ),
+                    bottom: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: questionsWidgets,
+                        ),
+                        SizedBox(width: 10),
+                        VisitorSpriteSheet.idleDown.asWidget(),
+                      ],
+                    )
+                ),
+              ]
+          );
+        }
+    );
+  }
+
+  void _answerQuestion(BuildContext dialogContext, String answer) {
+    Navigator.of(dialogContext).pop();
+    TalkDialog.show(
+        context,
+        [
+          Say(
+            text: [TextSpan(text: answer)],
+            person: GuideSpriteSheet.idleDown.asWidget(),
+          ),
+        ],
+        onClose: () {
+          Future.delayed(Duration.zero, _showChoicesDialog); // Delayed to avoid calling setState when widget tree is locked
+        }
+    );
   }
 }
