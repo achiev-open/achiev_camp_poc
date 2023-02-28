@@ -1,12 +1,21 @@
 import 'package:achiev_camp_poc/services/auth.service.dart';
 import 'package:dart_meteor/dart_meteor.dart';
 import 'package:flutter/material.dart';
+import '../main.dart';
 
 class AuthFormData {
   String name = "";
   String email = "";
   String password = "";
   String confirmPassword = "";
+
+  toJson() {
+    return {
+      "name": name,
+      "email": email,
+      "password": password,
+    };
+  }
 }
 
 enum AuthNavigationState {
@@ -68,7 +77,65 @@ class AuthPageState extends State<AuthPage> {
   }
 
   Widget buildSignUpForm() {
-    return Center(child: Text("Todo: Sign up form"));
+    return Expanded(
+        child: ListView(
+          children: [
+            TextField(
+              decoration: InputDecoration(label: Text("Name")),
+              onChanged: (value) {
+                setState(() { form.name = value; });
+              },
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              decoration: InputDecoration(label: Text("Email")),
+              onChanged: (value) {
+                setState(() { form.email = value; });
+              },
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              decoration: InputDecoration(label: Text("Password")),
+              obscureText: true,
+              onChanged: (value) {
+                setState(() { form.password = value; });
+              },
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              decoration: InputDecoration(label: Text("Confirm password")),
+              obscureText: true,
+              onChanged: (value) {
+                setState(() { form.confirmPassword = value; });
+              },
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                if (form.password != form.confirmPassword) {
+                  showError("Password doesn't match");
+                  return;
+                }
+                try {
+                  if (form.email.isEmpty || form.password.isEmpty) {
+                    showError("Email and password are required");
+                    return;
+                  }
+                  await meteor.call("signup", args: [form.toJson()]);
+                  await AuthService.loginWithPassword(form.email, form.password);
+                } catch (err) {
+                  if (err is MeteorError) {
+                    showError(err.reason ?? "Error with no details");
+                  } else {
+                    showError("An error occured");
+                  }
+                }
+              },
+              child: Text("Sign in"),
+            ),
+          ],
+        )
+    );
   }
 
   Widget buildSignInForm() {
