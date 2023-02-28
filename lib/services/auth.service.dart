@@ -2,7 +2,11 @@ import 'package:achiev_camp_poc/main.dart';
 import 'package:dart_meteor/dart_meteor.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = FlutterSecureStorage();
+const storage = FlutterSecureStorage(
+  mOptions: MacOsOptions(
+    synchronizable: true
+  )
+);
 
 class AuthService {
   static _saveMeteorLoginResult(MeteorClientLoginResult result) async {
