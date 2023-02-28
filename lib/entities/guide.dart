@@ -1,4 +1,5 @@
 import 'package:achiev_camp_poc/entities/visitor.dart';
+import 'package:achiev_camp_poc/main.dart';
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -111,12 +112,15 @@ class Guide extends SimpleNpc with ObjectCollision, AutomaticRandomMovement, Tap
       seeAndMoveToPlayer(
           radiusVision: 32 * 4,
           closePlayer: (player) {
+            dynamic user = meteor.userCurrentValue();
+            String name = user["profile"]["name"];
+
             isTalking = true;
             TalkDialog.show(
               context,
               [
                 Say(
-                  text: [TextSpan(text: "Hello !\nWelcome to the island")],
+                  text: [TextSpan(text: "Hello ${name}!\nWelcome to the island")],
                   person: GuideSpriteSheet.idleDown.asWidget(),
                 ),
                 Say(

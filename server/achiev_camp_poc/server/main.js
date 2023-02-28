@@ -13,7 +13,7 @@ Accounts.validateNewUser((user) => {
 		_id: { type: String },
 		emails: { type: Array },
 		'emails.$': { type: Object },
-		'emails.$.address': { type: String },
+		'emails.$.address': { type: String, rexEp: SimpleSchema.RegEx.Email },
 		'emails.$.verified': { type: Boolean },
 		createdAt: { type: Date },
 		profile: { type: Object },
