@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:achiev_camp_poc/entities/visitor.dart';
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/cupertino.dart';

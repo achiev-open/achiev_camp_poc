@@ -2,12 +2,19 @@ import 'dart:io';
 import 'package:achiev_camp_poc/decorations/house.dart';
 import 'package:achiev_camp_poc/entities/guide.dart';
 import 'package:achiev_camp_poc/entities/visitor.dart';
+import 'package:achiev_camp_poc/game-interface/main.interface.dart';
+import 'package:achiev_camp_poc/pages/auth.page.dart';
+import 'package:achiev_camp_poc/pages/connecting.page.dart';
+import 'package:achiev_camp_poc/services/auth.service.dart';
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
 import 'package:flutter/services.dart';
+import 'package:dart_meteor/dart_meteor.dart';
+
+var meteor = MeteorClient.connect(url: 'http://localhost:3000');
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +27,35 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Bonfire+Meteor POC',
-      home: SimpleLevel(),
+      // home: SimpleLevel(),
+      home: StreamBuilder<DdpConnectionStatus>(
+        stream: meteor.status(),
+        builder: (context, snapshot) {
+          // No information yet
+          if (!snapshot.hasData) {
+            return Container();
+          }
+
+          // No connexion
+          if (snapshot.data == null || !snapshot.data!.connected) {
+            return ConnectingPage();
+          }
+
+          // Try to auto-connect here
+          AuthService.loginWithToken();
+
+          // Check authentication status
+          return StreamBuilder<Map<String, dynamic>?>(
+            stream: meteor.user(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return AuthPage();
+              }
+              return SimpleLevel();
+            }
+          );
+        }
+      )
     );
   }
 }
@@ -54,7 +89,13 @@ class SimpleLevel extends StatelessWidget {
           }
         ),
         player: Visitor(Vector2(mapWidth / 2 * TILE_SIZE, (mapHeight - 12) * TILE_SIZE)),
-        joystick: getJoystickForPlatform()
+        joystick: getJoystickForPlatform(),
+        overlayBuilderMap: {
+            'main': (BuildContext context, BonfireGame game) {
+              return MainInterface();
+            },
+        },
+        initialActiveOverlays: const ['main'],
     );
   }
 
