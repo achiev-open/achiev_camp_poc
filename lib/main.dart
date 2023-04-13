@@ -45,14 +45,14 @@ class MyApp extends StatelessWidget {
           AuthService.loginWithToken();
 
           // Check authentication status
-          return StreamBuilder<Map<String, dynamic>?>(
-            stream: meteor.user(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return AuthPage();
+          return StreamBuilder<String?>(
+              stream: meteor.userId(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return AuthPage();
+                }
+                return SimpleLevel();
               }
-              return SimpleLevel();
-            }
           );
         }
       )
@@ -60,12 +60,41 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class SimpleLevel extends StatelessWidget {
+class SimpleLevel extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => SimpleLevelState();
+}
+
+class SimpleLevelState extends State<SimpleLevel> {
+  bool subscriptionReady = false;
+
+  @override
+  initState() {
+    meteor.subscribe("playerLocation", onReady: () {
+      setState(() {
+        subscriptionReady = true;
+      });
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     double TILE_SIZE = 32.0;
     int mapHeight = 50;
     int mapWidth = 30;
+
+    if (!subscriptionReady) {
+      return const CircularProgressIndicator();
+    }
+
+    dynamic location = meteor.userCurrentValue()!["location"] ?? {};
+    Map<String, Direction> directions = {
+      "right": Direction.right,
+      "left": Direction.left,
+      "up": Direction.up,
+      "down": Direction.down,
+    };
 
     return BonfireWidget(
       // showCollisionArea: true,
@@ -88,7 +117,10 @@ class SimpleLevel extends StatelessWidget {
             }
           }
         ),
-        player: Visitor(Vector2(mapWidth / 2 * TILE_SIZE, (mapHeight - 12) * TILE_SIZE)),
+        player: Visitor(
+          Vector2(location["x"] ?? mapWidth / 2 * TILE_SIZE, location["y"] ?? (mapHeight - 12) * TILE_SIZE),
+          directions[location["direction"] ?? "up"]!,
+        ),
         joystick: getJoystickForPlatform(),
         overlayBuilderMap: {
             'main': (BuildContext context, BonfireGame game) {

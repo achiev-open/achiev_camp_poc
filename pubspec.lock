@@ -77,10 +77,10 @@ packages:
     dependency: "direct main"
     description:
       name: dart_meteor
-      sha256: fac92f70bcd5f10afedfd26c11ae81b356a59ca34d847310c20a9e7f27d0cb94
+      sha256: "42ccb8b4aa36d4ef019ecfd997176fe692bd003930f08ab4e812dd41919d82df"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "4.0.0-beta.2"
   fake_async:
     dependency: transitive
     description:
@@ -333,6 +333,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
+  web_socket_channel:
+    dependency: transitive
+    description:
+      name: web_socket_channel
+      sha256: d88238e5eac9a42bb43ca4e721edba3c08c6354d4a53063afaa568516217621b
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.0"
 sdks:
   dart: ">=3.0.0-179.0.dev <4.0.0"
   flutter: ">=3.3.0"

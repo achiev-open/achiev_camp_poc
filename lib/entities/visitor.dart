@@ -1,3 +1,4 @@
+import 'package:achiev_camp_poc/main.dart';
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/services.dart';
 
@@ -82,11 +83,12 @@ class VisitorSpriteSheet {
 }
 
 class Visitor extends SimplePlayer with ObjectCollision {
-  Visitor(Vector2 position): super(
+  Visitor(Vector2 position, Direction initDirection): super(
     position: position,
     size: Vector2(16, 32),
     animation: VisitorSpriteSheet.simpleDirectionAnimation,
-    speed: 75
+    speed: 75,
+    initDirection: initDirection,
   ) {
     setupCollision(
       CollisionConfig(
@@ -114,5 +116,11 @@ class Visitor extends SimplePlayer with ObjectCollision {
     }
 
     super.joystickAction(event);
+  }
+
+  @override
+  void onMove(double speed, Direction direction, double angle) {
+    meteor.call("updateLocation", args: [position.x, position.y, direction.name]);
+    super.onMove(speed, direction, angle);
   }
 }

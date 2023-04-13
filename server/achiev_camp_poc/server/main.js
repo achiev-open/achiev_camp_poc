@@ -13,7 +13,7 @@ Accounts.validateNewUser((user) => {
 		_id: { type: String },
 		emails: { type: Array },
 		'emails.$': { type: Object },
-		'emails.$.address': { type: String, rexEp: SimpleSchema.RegEx.Email },
+		'emails.$.address': { type: String },
 		'emails.$.verified': { type: Boolean },
 		createdAt: { type: Date },
 		profile: { type: Object },
@@ -39,5 +39,16 @@ Meteor.methods({
 		} catch (err) {
 			throw new Meteor.Error(400, err.message);
 		}
+	},
+	"updateLocation"(x, y, direction) {
+		Meteor.users.update({ _id: this.userId }, {
+			$set: {
+				location: { x, y, direction },
+			}
+		});
 	}
-})
+});
+
+Meteor.publish("playerLocation", function () {
+	return Meteor.users.find({ _id: this.userId }, { projection: { location: 1 } });
+});

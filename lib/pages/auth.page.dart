@@ -112,15 +112,15 @@ class AuthPageState extends State<AuthPage> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
+                if (form.name.isEmpty || form.email.isEmpty || form.password.isEmpty) {
+                  showError("Name, Email and password are required");
+                  return;
+                }
                 if (form.password != form.confirmPassword) {
                   showError("Password doesn't match");
                   return;
                 }
                 try {
-                  if (form.email.isEmpty || form.password.isEmpty) {
-                    showError("Email and password are required");
-                    return;
-                  }
                   await meteor.call("signup", args: [form.toJson()]);
                   await AuthService.loginWithPassword(form.email, form.password);
                 } catch (err) {
