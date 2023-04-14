@@ -49,6 +49,15 @@ Meteor.methods({
 	}
 });
 
-Meteor.publish("playerLocation", function () {
-	return Meteor.users.find({ _id: this.userId }, { projection: { location: 1 } });
+// Meteor.publish("playerLocation", function () {
+// 	return Meteor.users.find({ _id: this.userId }, { projection: { location: 1 } });
+// });
+
+Meteor.publish("onlinePlayers", function () {
+	return Meteor.users.find({
+		$or: [
+			{ _id: this.userId },
+			{ "status.online": true }
+		]
+	}, { projection: { profile: 1, location: 1, status: 1 } });
 });

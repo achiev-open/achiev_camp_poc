@@ -118,9 +118,15 @@ class Visitor extends SimplePlayer with ObjectCollision {
     super.joystickAction(event);
   }
 
+  DateTime lastPositionUpdate = DateTime.now();
   @override
   void onMove(double speed, Direction direction, double angle) {
+    DateTime now = DateTime.now();
+    if (now.difference(lastPositionUpdate).inMilliseconds < 40) {
+      return;
+    }
     meteor.call("updateLocation", args: [position.x, position.y, direction.name]);
+    lastPositionUpdate = now;
     super.onMove(speed, direction, angle);
   }
 }

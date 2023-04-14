@@ -85,7 +85,7 @@ class GuideSpriteSheet {
 }
 
 class Guide extends SimpleNpc with ObjectCollision, AutomaticRandomMovement, TapGesture {
-  bool hasGreetedPlayer = false;
+  bool hasGreetedPlayer = true; // false; Disabled
   bool isTalking = false;
   bool isCloseToPlayer = false;
 

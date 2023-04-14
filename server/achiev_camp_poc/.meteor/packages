@@ -24,3 +24,4 @@ hot-module-replacement@0.5.1  # Update code in development without reloading the
 blaze-hot               # Update files using Blaze's API with HMR
 accounts-password
 aldeed:simple-schema
+mizzao:user-status

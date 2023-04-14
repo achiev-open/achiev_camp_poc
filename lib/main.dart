@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:achiev_camp_poc/decorations/house.dart';
 import 'package:achiev_camp_poc/entities/guide.dart';
+import 'package:achiev_camp_poc/entities/other-player.dart';
 import 'package:achiev_camp_poc/entities/visitor.dart';
 import 'package:achiev_camp_poc/game-interface/main.interface.dart';
 import 'package:achiev_camp_poc/pages/auth.page.dart';
@@ -67,15 +68,63 @@ class SimpleLevel extends StatefulWidget {
 
 class SimpleLevelState extends State<SimpleLevel> {
   bool subscriptionReady = false;
+  late GameController controller;
+  Map<String, OtherPlayer> players = {};
+
+  Map<String, Direction> directions = {
+    "right": Direction.right,
+    "left": Direction.left,
+    "up": Direction.up,
+    "down": Direction.down,
+  };
 
   @override
   initState() {
-    meteor.subscribe("playerLocation", onReady: () {
+    controller = GameController();
+    meteor.subscribe("onlinePlayers", onReady: () {
       setState(() {
         subscriptionReady = true;
       });
     });
     super.initState();
+  }
+
+  _simulateOtherPlayers() {
+    if (!controller.isMounted) {
+      Future.delayed(Duration(milliseconds: 100), _simulateOtherPlayers);
+      return;
+    }
+
+    meteor.collection("users").listen((users) {
+      // Remove disconnected players - Using tmp userIds list to not update players while iterating on its keys
+      List<String> userIds = players.keys.toList();
+      for (var id in userIds) {
+        if (!users.keys.contains(id) && players[id] != null) {
+          players[id]!.removeFromParent();
+          players.remove(id);
+        }
+      }
+
+      users.values.forEach((user) {
+        if (user["_id"] == meteor.userIdCurrentValue()) {
+          return;
+        }
+        if (user["status"]["online"] != true || user["location"] == null) {
+          return;
+        }
+
+        String id = user["_id"];
+        Vector2 position = Vector2(user["location"]["x"], user["location"]["y"]);
+        Direction direction = directions[user["location"]["direction"]] ?? Direction.up;
+
+        if (players[id] == null) { // New connexion, add to game
+          players[id] = OtherPlayer(position, direction);
+          controller.gameRef.add(players[id]!);
+        } else {
+          players[id]!.moveToPosition(position);
+        }
+      });
+    });
   }
 
   @override
@@ -88,15 +137,12 @@ class SimpleLevelState extends State<SimpleLevel> {
       return const CircularProgressIndicator();
     }
 
+    _simulateOtherPlayers();
+
     dynamic location = meteor.userCurrentValue()!["location"] ?? {};
-    Map<String, Direction> directions = {
-      "right": Direction.right,
-      "left": Direction.left,
-      "up": Direction.up,
-      "down": Direction.down,
-    };
 
     return BonfireWidget(
+        gameController: controller,
       // showCollisionArea: true,
         cameraConfig: CameraConfig(
           moveOnlyMapArea: true,
@@ -119,7 +165,7 @@ class SimpleLevelState extends State<SimpleLevel> {
         ),
         player: Visitor(
           Vector2(location["x"] ?? mapWidth / 2 * TILE_SIZE, location["y"] ?? (mapHeight - 12) * TILE_SIZE),
-          directions[location["direction"] ?? "up"]!,
+          directions[location["direction"]] ?? Direction.up,
         ),
         joystick: getJoystickForPlatform(),
         overlayBuilderMap: {
